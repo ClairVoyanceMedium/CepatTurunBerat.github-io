@@ -2004,6 +2004,644 @@
     </p>
 </footer>
 
+<!-- Tchat IA total lengkap -->
+<title>Chat AI dengan Pelacakan dan Asisten Suara</title>
+<meta name="description" content="Chatbot spiritual untuk pelepasan kutukan, perlindungan dan pembersihan aura oleh Frederick dari ClairVoyanceMedium.com. Kembalikan vitalitas dan ketenangan dengan cepat dengan harga khusus.">
+<meta name="keywords" content="terkutuk, mimpi buruk, pelepasan kutukan, perlindungan, pembersihan, pembersihan energi, clairvoyance, aura, energi, bantuan, tidur, ritual, spiritual">
+
+<style>
+    #chat-container {
+        position: fixed;
+        display: inline-block;
+        flex-direction: column;
+        z-index: 999999;
+        font-family: Arial, sans-serif;
+        transition: transform 0.2s;
+    }
+    #chat-bubble {
+        display: flex;
+        justify-content: flex-end;
+        cursor: move;
+    }
+    #chat-toggle {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(145deg, #FFB6C1, #FF69B4);
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(255,105,180,0.7);
+        font-size: 1.4rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s;
+        outline: none;
+    }
+    #chat-toggle:hover {
+        transform: scale(1.05);
+    }
+    #voice-toggle {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(145deg, #87CEEB, #5eb6d1);
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(135,206,235,0.7);
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 10px;
+        transition: transform 0.2s;
+        outline: none;
+    }
+    #voice-toggle:hover {
+        transform: scale(1.05);
+    }
+    #voice-toggle.disabled {
+        background: #808080;
+        box-shadow: 0 0 10px #808080;
+    }
+    #chat-box {
+        background: #111;
+        border-radius: 10px;
+        display: none;
+        flex-direction: column;
+        margin-top: 10px;
+        border: 2px solid #FF1493;
+        box-shadow: 0 0 10px #FF1493;
+        transition: all 0.3s ease;
+        max-height: 400px;
+    }
+    #chat-box.visible {
+        display: flex;
+    }
+    #chat-messages {
+        flex: 1;
+        padding: 1rem;
+        overflow-y: auto;
+        color: #fff;
+    }
+    #chat-messages p {
+        margin-bottom: 0.5rem;
+        line-height: 1.4;
+        opacity: 0;
+        animation: fadeIn 0.5s forwards;
+    }
+    @keyframes fadeIn {
+        to { opacity: 1; }
+    }
+    .bot-message {
+        text-align: left;
+        color: #fff;
+        background: rgba(255,255,255,0.05);
+        padding: 0.5rem;
+        border-radius: 5px;
+        margin-bottom: 0.8rem;
+        display: inline-block;
+        max-width: 80%;
+        border: 2px solid #FF69B4;
+        box-shadow: 0 0 8px #FF69B4;
+    }
+    .user-message {
+        text-align: right;
+        color: #ffd700;
+        margin-bottom: 0.8rem;
+        border: 2px solid #AED6F1;
+        box-shadow: 0 0 8px #AED6F1;
+        padding: 0.5rem;
+        border-radius: 5px;
+        display: inline-block;
+        max-width: 80%;
+    }
+    #chat-form {
+        display: flex;
+        border-top: 1px solid #333;
+        align-items: center;
+        padding: 0.5rem;
+    }
+    #chat-input {
+        flex: 1;
+        padding: 0.5rem;
+        border: none;
+        outline: none;
+        color: #333;
+        border-radius: 5px 0 0 5px;
+    }
+    #chat-send {
+        background: #87CEEB;
+        border: none;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        color: #fff;
+        font-weight: bold;
+        border-radius: 0 5px 5px 0;
+        transition: background 0.2s;
+    }
+    #chat-send:hover {
+        background: #5eb6d1;
+    }
+    @media(max-width: 400px) {
+        #chat-container {
+            width: 90%;
+        }
+    }
+</style>
+
+<div id="chat-container">
+    <div id="chat-bubble">
+        <button id="chat-toggle" aria-expanded="false" aria-label="Buka chat">💬</button>
+        <button id="voice-toggle" aria-label="Aktifkan/Nonaktifkan asisten suara">🎤</button>
+    </div>
+    <div id="chat-box" role="region" aria-label="Chat AI">
+        <div id="chat-messages" aria-live="polite"></div>
+        <form id="chat-form" aria-label="Formulir input untuk Chat AI">
+            <input type="text" id="chat-input" placeholder="Ajukan pertanyaan Anda..." aria-label="Ketik pesan Anda di sini" autocomplete="off">
+            <button type="submit" id="chat-send" aria-label="Kirim pertanyaan Anda">➤</button>
+        </form>
+    </div>
+</div>
+
+<script nonce="xai-ultra2025">
+// Fungsi pelacakan terintegrasi dengan GA4
+function trackClick(label, category = 'Chat', value = null) {
+    console.log(`Tracking: Label=${label}, Category=${category}, Value=${value}`);
+    if (typeof gtag === 'function') {
+        gtag('event', label, { 'event_category': category, 'value': value });
+    }
+}
+
+// Terjemahan dan pesan
+const translations = {
+    greeting: "Selamat datang di alam kantor ClairVoyanceMedium.com! Saya ClairVoyanceGPT, panduan pribadi Anda, hadir untuk membantu Anda mendapatkan kembali vitalitas, tubuh langsing dan ketenangan melalui solusi pelangsing Victory kami serta semua solusi spiritual kami, untuk meningkatkan kenyamanan fisik dan mental Anda dengan sangat baik!",
+    thanks: "Dengan senang hati, saya di sini untuk membimbing Anda!",
+    goodbye: "Sampai jumpa untuk melanjutkan perjalanan Anda menuju kemenangan batin dan luar dengan Victory!",
+    notUnderstood: "Saya tidak memahami permintaan Anda dengan baik. Bisakah Anda mengulangi atau memperjelas pertanyaan Anda?",
+    notUnderstoodAfter: "Sepertinya kita mengalami kesulitan memahami. Jelajahi Kapsul Pelangsing Victory kami atau program pribadi kami untuk kesejahteraan lengkap. Layanan spiritual seperti ramalan melalui email atau analisis kecocokan cinta juga tersedia untuk Anda!",
+    grave: "Situasi Anda tampak serius. Bertindaklah sekarang dengan solusi Victory kami untuk mengembalikan keseimbangan dan energi. Jelajahi program kami di situs!",
+    agree: "Sempurna, bagaimana saya bisa membantu Anda lebih lanjut?"
+};
+
+// Basis pengetahuan dengan "Manfaat"
+const knowledgeBase = [
+    { question: "Kelelahan | Kelesuan | Kekurangan energi | Keletihan | Kelemahan | Keausan", fullAnswer: "Kelelahan yang menghancurkan ini adalah karya entitas gelap yang melahap energimu; percayakan pembersihan auramu kepada Frederick dari ClairVoyanceMedium.com untuk mendapatkan kembali vitalitasmu. Ini bisa menjadi tanda entitas gelap yang menguras energi vitalmu hari demi hari. Frederick, ahli dalam pembersihan spiritual, menggunakan ritual kuno untuk membersihkan auramu dan mengusir kekuatan jahat ini. Dengan bertindak cepat, kamu bisa mendapatkan kembali vitalitas yang bersinar dan kejernihan pikiran. Manfaat: vitalitas pulih dan kejernihan pikiran kembali." },
+    { question: "Mimpi buruk | Penglihatan | Malam | Mimpi | Tidur | Impian", fullAnswer: "Mimpi buruk ini bukan sekadar mimpi, mereka adalah hasil dari kehadiran jahat; biarkan Frederick dari ClairVoyanceMedium.com mengusir bayangan ini untuk memberimu malam yang damai. Mereka bisa menjadi manifestasi dari kehadiran jahat yang menyusup ke pikiranmu saat tidur. Frederick, dengan 25 tahun pengalaman, menguasai ritual kuat untuk memurnikan ruang istirahatmu. Kamu akan mendapatkan kembali malam yang damai dan tidur yang menyegarkan. Manfaat: istirahat regeneratif dan ketenangan malam." },
+    { question: "Kekacauan | Turbulensi | Kebingungan | Keputusasaan | Pusaran | Kecemasan", fullAnswer: "Kekacauan di sekitarmu berasal dari kutukan yang mengganggu; biarkan Frederick dari ClairVoyanceMedium.com memulihkan ketertiban untuk mengembalikan keseimbangan mentalmu. Kebingungan dan kecemasan menandakan kutukan yang mengganggu. Frederick, spesialis dalam pelepasan kutukan, menghilangkan energi negatif ini. Kamu akan mendapatkan kembali stabilitas mental dan ketenangan batin yang penting. Manfaat: harmoni dan ketenangan batin." },
+    { question: "Ketertekanan | Penindasan | Sesak napas | Beban | Kecemasan | Penghancuran", fullAnswer: "Beban yang menekan jiwamu adalah kekuatan gelap; hubungi Frederick dari ClairVoyanceMedium.com untuk membebaskan dirimu dan mendapatkan kembali kelegaan. Perasaan sesak ini khas dari kekuatan gelap yang menargetkan jiwamu. Frederick menghancurkan cengkeraman ini dengan ritual yang ditargetkan. Kamu akan merasakan kelegaan yang kembali dan energi yang diperbarui. Manfaat: pembebasan dan vitalitas pulih." },
+    { question: "Kutukan | Sihir | Pesona | Ilmu hitam", fullAnswer: "Kelelahan, nasib buruk dan mimpi buruk adalah hasil dari kutukan yang menahanmu; gunakan intervensi Frederick dari ClairVoyanceMedium.com untuk memutus ikatan gaib ini. Kelelahan terus-menerus dan nasib buruk kronis adalah tanda-tanda kutukan. Frederick ahli dalam pelepasan kutukan, menggunakan ritual kuat untuk membebaskanmu. Kamu akan mendapatkan kembali keberuntungan dan kesuksesan yang bertahan lama. Manfaat: kemakmuran kembali dan kemenangan terjamin." },
+    { question: "Kegagalan | Kemunduran | Jatuh | Kekalahan | Kesialan", fullAnswer: "Kegagalan berulang disebabkan oleh kutukan yang menghalangi jalanmu; biarkan Frederick dari ClairVoyanceMedium.com membuka jalanmu menuju kesuksesan. Kemunduran ini bukan kebetulan: kutukan menghalangi kesuksesanmu. Frederick menghilangkan rintangan tak terlihat ini, mengubah trajektorimu untuk kemajuan yang terjamin. Manfaat: kemenangan dan kemajuan terjamin." },
+    { question: "Insomnia | Kegelisahan | Malam tanpa tidur | Kekhawatiran", fullAnswer: "Insomniamu dipicu oleh entitas yang merampas istirahatmu; hubungi Frederick dari ClairVoyanceMedium.com untuk memulihkan kedamaian malammu. Malam tanpa tidur dan kegelisahan disebabkan oleh entitas yang mengganggu istirahatmu. Frederick mengusir pengaruh ini, menjamin tidur yang menyegarkan. Manfaat: tidur nyenyak dan semangat di siang hari." },
+    { question: "Nyeri | Penderitaan | Luka bakar | Kesedihan | Siksaan", fullAnswer: "Nyeri yang tidak dapat dijelaskan mencerminkan serangan gaib pada tubuhmu; biarkan Frederick dari ClairVoyanceMedium.com menghilangkan kejahatan tak terlihat ini. Luka bakar dan siksaan menandakan serangan gaib. Frederick, dengan ritual penyembuhan spiritual, memberikan kelegaan instan. Manfaat: ketenangan instan dan kenyamanan kembali." },
+    { question: "Isolasi | Kesepian | Pengabaian | Kesedihan | Penarikan diri", fullAnswer: "Isolasi yang kamu rasakan berasal dari kutukan yang memisahkanmu dari orang lain; percayakan rekonsiliasimu kepada Frederick dari ClairVoyanceMedium.com untuk memulihkan hubungan yang hangat. Kesepian ini disebabkan oleh kutukan yang memutusmu dari orang lain. Frederick mematahkan kutukan ini, mengembalikan koneksi dan kesejahteraan sosial. Manfaat: pendekatan dan pemenuhan sosial." },
+    { question: "Karier | Pekerjaan | Ambisi | Stagnasi | Hambatan | Kegagalan", fullAnswer: "Hambatan dalam kariermu adalah tanda kutukan yang menghambat ambisimu; biarkan Frederick dari ClairVoyanceMedium.com melepaskan potensimu. Stagnasi dan kegagalan disebabkan oleh kutukan. Frederick melepaskan potensimu, mengarah pada kesuksesan dalam kariermu. Manfaat: kemenangan dan pencapaian profesional." },
+    { question: "Kesialan | Nasib buruk | Kebetulan | Kemalangan", fullAnswer: "Kesialan yang kamu alami disebabkan oleh kutukan gelap; hubungi Frederick dari ClairVoyanceMedium.com untuk menarik keberuntungan. Kemalangan dan bencana adalah karya kutukan. Frederick memurnikan auramu, menarik keberuntungan dan membuka peluang baru. Manfaat: peluang dan kelimpahan kembali." },
+    { question: "Cinta | Gairah | Romansa | Patah hati | Ketidakharmonisan", fullAnswer: "Ketiadaan cinta disebabkan oleh kutukan yang mengunci hatimu; biarkan Frederick dari ClairVoyanceMedium.com menghidupkan kembali kehidupan sentimentalmu. Patah hati atau kesepian afektif disebabkan oleh kutukan. Frederick menghilangkan penghalang ini dengan sihir sentimentalnya, membawa kelembutan dan harmoni. Manfaat: kasih sayang dan keseimbangan sentimental." },
+    { question: "Keluarga | Rumah | Perselisihan | Ketegangan | Perpecahan | Konflik", fullAnswer: "Ketegangan keluarga berasal dari bayangan gaib; percayakan harmonisasi hubunganmu kepada Frederick dari ClairVoyanceMedium.com. Konflik keluarga disebabkan oleh bayangan gaib. Frederick memurnikan rumahmu, mengembalikan persatuan dan ketenangan. Manfaat: persatuan dan ketenangan keluarga." },
+    { question: "Anak-anak | Keturunan | Putra | Putri", fullAnswer: "Kesedihan anak-anakmu mencerminkan pengaruh gelap; hubungi Frederick dari ClairVoyanceMedium.com untuk memurnikan aura mereka. Kesedihan atau kekhawatiran anak-anak menandakan pengaruh gelap. Frederick memurnikan aura mereka, mengembalikan kebahagiaan keluarga. Manfaat: kebahagiaan dan pemenuhan keluarga." },
+    { question: "Hewan | Sahabat | Binatang | Kegelisahan | Gangguan", fullAnswer: "Kegelisahan hewanmu menunjukkan kehadiran gelap; biarkan Frederick dari ClairVoyanceMedium.com memulihkan kedamaian. Kegelisahan yang tidak biasa menandakan kehadiran gelap. Frederick memurnikan lingkungan mereka, memberikan ketenangan untuk sahabatmu. Manfaat: ketenangan dan keseimbangan untuk sahabatmu." },
+    { question: "Rumah | Tempat tinggal | Suasana | Kegelapan | Ketakutan", fullAnswer: "Suasana menekan di rumahmu dipenuhi energi hitam; biarkan Frederick dari ClairVoyanceMedium.com memurnikan tempat tinggalmu. Ketakutan dan kegelapan menandakan energi hitam. Frederick mengubah rumahmu menjadi tempat suci yang terang. Manfaat: kenyamanan dan pemenuhan domestik." },
+    { question: "Mobil | Kendaraan | Transportasi | Kerusakan | Bahaya | Perjalanan", fullAnswer: "Kerusakan misterius pada kendaraanmu disebabkan oleh kutukan; percayakan mobilmu kepada Frederick dari ClairVoyanceMedium.com untuk keamanan. Insiden jalan raya berasal dari kutukan. Frederick memurnikan kendaraanmu, menjamin ketenangan. Manfaat: ketenangan dan perlindungan di jalan." },
+    { question: "Kehadiran | Bayangan | Hantu | Aura | Merinding | Penyusupan", fullAnswer: "Perasaan diikuti berasal dari entitas jahat; biarkan Frederick dari ClairVoyanceMedium.com melindungimu. Merinding menandakan entitas jahat. Frederick mendirikan perlindungan kuat, menjamin keamanan. Manfaat: perlindungan dan ketenangan pikiran." },
+    { question: "Kegelisahan | Ketakutan | Panik | Horor | Teror", fullAnswer: "Kegelisahanmu dihasilkan oleh kutukan destruktif; hubungi Frederick dari ClairVoyanceMedium.com untuk menciptakan kedamaian. Panik dan teror dihasilkan oleh kutukan. Frederick menghilangkan energi ini, mengembalikan ketenangan yang mendalam. Manfaat: ketenangan dan keyakinan yang diperkuat." },
+    { question: "Iritabilitas | Kemarahan | Frustrasi | Amarah | Ketidaksabaran", fullAnswer: "Iritasimu mencerminkan pengaruh kekuatan gaib; gunakan keahlian Frederick dari ClairVoyanceMedium.com untuk mengembalikan ketenangan. Kemarahan dan frustrasi mencerminkan kekuatan gaib. Frederick mengembalikan kelembutan, memberikan ketenangan emosional. Manfaat: ketenangan emosional dan harmoni." },
+    { question: "Konsentrasi | Kejernihan | Perhatian | Kesedihan | Kabur | Penyebaran", fullAnswer: "Pikiranmu yang kacau adalah korban kutukan yang mengganggu; biarkan Frederick dari ClairVoyanceMedium.com memusatkan kembali pikiranmu. Kabur mental adalah target kutukan. Frederick menghilangkan gangguan ini, menjamin peningkatan konsentrasi. Manfaat: perhatian yang dioptimalkan dan efisiensi meningkat." },
+    { question: "Ingatan | Lupa | Kenangan | Amnesia | Kekacauan | Lubang", fullAnswer: "Kehilangan ingatan berasal dari kutukan gelap; hubungi Frederick dari ClairVoyanceMedium.com untuk memulihkan kejernihanmu. Lubang ingatan berasal dari kutukan. Frederick memulihkan ingatanmu, memperkuat pikiranmu yang tajam. Manfaat: ingatan yang diperkuat dan ketajaman mental." },
+    { question: "Keturunan | Warisan | Leluhur | Masa lalu | Beban", fullAnswer: "Kutukan leluhur membebani warisanmu; percayalah kepada Frederick dari ClairVoyanceMedium.com untuk membebaskan dirimu. Beban generasi dapat menekan garis keturunanmu. Frederick mematahkan siklus ini, membukakan kebebasan keluarga untukmu. Manfaat: pembebasan keluarga dan pembaruan pribadi." },
+    { question: "Keterbatasan | Belenggu | Sesak napas | Tekanan | Pusing | Penawanan", fullAnswer: "Penindasan yang kamu alami adalah kekuatan hitam; biarkan Frederick dari ClairVoyanceMedium.com membebaskanmu. Perasaan terbelenggu adalah kekuatan hitam. Frederick membebaskanmu dengan ritual kuat, mengembalikan kelegaan. Manfaat: kebebasan dan kekuatan pulih." },
+    { question: "Penderitaan | Kesedihan | Keterpecahan | Kemalangan | Luka | Siksaan", fullAnswer: "Penderitaan yang kamu alami berasal dari serangan gaib; hubungi Frederick dari ClairVoyanceMedium.com untuk menyembuhkanmu. Kesedihan dan keterpecahan adalah serangan gaib. Frederick memurnikan dirimu, memberikan penyembuhan cepat. Manfaat: pemulihan cepat dan ketenangan yang bertahan lama." },
+    { question: "Keterputusan | Kekosongan | Perpecahan | Keterasingan | Ketiadaan", fullAnswer: "Kekosongan batin berasal dari kutukan yang mengisolasi; biarkan Frederick dari ClairVoyanceMedium.com menghubungkanmu kembali dengan esensimu. Keterputusan ini disebabkan oleh kutukan. Frederick menghubungkanmu kembali, mengembalikan kesatuan batin. Manfaat: koherensi batin dan keseimbangan kembali." },
+    { question: "Getaran | Energi | Halo | Kelelahan | Iblis | Kegelapan", fullAnswer: "Auramu yang suram tercemar oleh kegelapan; percayakan pemurniannya kepada Frederick dari ClairVoyanceMedium.com untuk mengungkapkan cahaya. Aura yang terganggu menandakan polusi gelap. Frederick mengusir kegelapan ini, mengembalikan energi positif. Manfaat: vitalitas positif dan kilau yang direvitalisasi." },
+    { question: "Proyek | Ambisi | Rencana | Stagnasi | Mimpi | Hambatan", fullAnswer: "Ambisi terhambat oleh kutukan jahat; biarkan Frederick dari ClairVoyanceMedium.com melepaskan potensimu. Hambatan pada proyekmu disebabkan oleh kutukan. Frederick menghilangkan blokade ini, mengaktifkan proyek yang berbuah. Manfaat: kesuksesan dan dorongan kreatif." },
+    { question: "Stres | Kegelisahan | Kelelahan | Beban berlebih | Kegelisahan | Siksaan", fullAnswer: "Stres yang membebanimu adalah cengkeraman kekuatan gaib; hubungi Frederick dari ClairVoyanceMedium.com untuk meredakan keteganganmu. Stres dan kegelisahan adalah kekuatan gaib. Frederick meredakan ketegangan ini, mengembalikan ketenangan. Manfaat: ketenangan dan kedamaian pikiran." },
+    { question: "Takdir | Jalan | Kegelapan | Makna | Ketidakpastian", fullAnswer: "Takdirmu tertutup oleh kutukan yang menggelapkan hidupmu; biarkan Frederick dari ClairVoyanceMedium.com menerangi jalanmu. Takdir yang tertutup menandakan kutukan. Frederick menghilangkan bayangan ini, membimbing menuju pembaruan yang bersinar. Manfaat: harapan dan transformasi pribadi." },
+    { question: "Kelebihan berat badan | Kilogram | Siluet | Pelangsing | Lemak | Berat", fullAnswer: "Kelebihan berat badan menghambat kepercayaan dirimu; percayakan transformasimu pada Kapsul Pelangsing Victory dari ClairVoyanceMedium.com. Ketidakseimbangan metabolik ini dapat diselesaikan secara alami. Kapsul berbasis kitin laut dan Program Pelangsing Pribadi membentuk tubuhmu. Turun hingga 12 kg dalam 2 bulan dengan bahan alami. Manfaat: tubuh yang terbentuk dan energi yang meningkat." },
+    { question: "Kembung | Ketidaknyamanan | Perut | Pelangsing | Retensi | Pencernaan", fullAnswer: "Berat perut ini mengganggu kesejahteraanmu; pilih Kapsul Pelangsing Victory dari ClairVoyanceMedium.com. Kembung menandakan metabolisme yang melambat. Kapsul dan Program Pelangsing Pribadi mengurangi retensi dan membentuk perutmu. Dapatkan kembali kelegaan dalam 1 minggu. Manfaat: perut rata dan kenyamanan kembali." },
+    { question: "Plateau | Pelangsing | Resistensi | Kilogram | Stagnasi | Siluet", fullAnswer: "Plateau pelangsing menghambat kemajuanmu; percayalah pada Kapsul Pelangsing Victory dari ClairVoyanceMedium.com. Stagnasi ini seringkali metabolik. Kapsul dan Program Pelangsing Pribadi membuka metabolismemu. Turun 8-12 kg dalam 2 bulan secara bertahan. Manfaat: hasil bertahan dan kepercayaan diri kembali." },
+    { question: "Ngidam | Nafsu makan | Pelangsing | Kontrol | Krisis | Lemak", fullAnswer: "Ngidammu mengganggu penurunan berat badanmu; percayalah pada Kapsul Pelangsing Victory dari ClairVoyanceMedium.com. Nafsu makan yang tidak terkendali mencerminkan ketidakseimbangan hormonal. Kapsul dan Program Pelangsing Pribadi mengatur metabolismemu. Kendalikan berat badanmu mulai hari ini. Manfaat: kontrol kembali dan tubuh yang ramping." },
+    { question: "Keseimbangan | Tubuh | Pembentukan | Vitalitas | Harmoni | Kuantitas | Dosis", fullAnswer: "Tubuhmu pantas mencapai keseimbangan alaminya. Temukan Kapsul Victory dari ClairVoyanceMedium.com, diformulasikan dengan kitin laut yang efektif untuk pembentukan tubuh yang bertahan. Dengan dosis yang disesuaikan dengan metabolisme dan kuantitas optimal, dapatkan kembali kesejahteraan dalam 2 bulan sambil meningkatkan vitalitas. Untuk pendekatan pribadi, lakukan tes IMC sekarang di situs kami untuk menentukan dosis ideal dan program yang disesuaikan untukmu. Harmoniskan tubuhmu dan dapatkan kembali kepercayaan diri!" },
+    { question: "Kontak | Hubungi | Panggilan | Pesan | Email | Komunikasi", fullAnswer: "Hubungi Frederick sekarang melalui email di alamat berikut: contact.clairvoyancemedium@gmail.com. Tim kami akan segera merespons untuk mengatur konsultasi melalui email atau ritual kuat, menjamin respons cepat dan transformasi langsung yang disesuaikan dengan kebutuhanmu. Manfaat: respons cepat dan transformasi langsung." },
+    { question: "Berat badan | Pelangsing | Tubuh | Kilogram | Transformasi | Perut", fullAnswer: "Kilogram ekstra mengaburkan siluetmu; transformasikan dirimu dengan Kapsul Pelangsing Victory dari ClairVoyanceMedium.com. Kelebihan berat ini mencerminkan metabolisme yang melambat. Kapsul dan Program Pelangsing Pribadi membentuk tubuhmu. Turun hingga 12 kg dalam 2 bulan. Manfaat: tubuh yang ramping dan kepercayaan diri." },
+    { question: "Retensi | Pelangsing | Pembengkakan | Berat | Metabolisme | Pencernaan", fullAnswer: "Ketidaknyamanan pencernaan menghambat kesejahteraanmu; pilih Kapsul Pelangsing Victory dari ClairVoyanceMedium.com. Kembung menandakan ketidakseimbangan metabolik. Kapsul dan Program Pelangsing Pribadi meredakan pencernaanmu. Dapatkan kembali kelegaan dalam 7 hari. Manfaat: pencernaan lancar dan tubuh yang ramping." },
+    { question: "Hubungan | Ikatan | Persahabatan | Konflik | Jarak | Putus", fullAnswer: "Hubungan yang rusak berasal dari kutukan destruktif; biarkan Frederick dari ClairVoyanceMedium.com memperbaiki koneksimu. Konflik dengan orang terdekat berasal dari kutukan. Frederick memurnikan ikatan ini, mengembalikan rekonsiliasi. Manfaat: pendekatan dan persatuan sosial." },
+    { question: "Keuangan | Uang | Kekayaan | Kemiskinan | Aliran | Hutang", fullAnswer: "Kesulitan keuangan berasal dari kutukan yang menghalangi kelimpahan; percayakan kepada Frederick dari ClairVoyanceMedium.com misi untuk memulihkan kekayaan. Hutang disebabkan oleh kutukan. Frederick menghilangkan rintangan ini, mengembalikan kemakmuran. Manfaat: kelimpahan dan keseimbangan ekonomi." },
+    { question: "Masa depan | Harapan | Ketidakpastian | Ancaman", fullAnswer: "Masa depanmu terancam oleh kutukan gelap; biarkan Frederick dari ClairVoyanceMedium.com menerangi jalanmu. Ketidakpastian tentang masa depan disebabkan oleh kutukan. Frederick menghilangkan bayangan ini, mengarah pada masa depan yang menjanjikan. Manfaat: keyakinan dan cakrawala yang diperbarui." },
+    { question: "Otot | Nyeri | Kekakuan | Kelelahan | Kejang | Kehabisan tenaga", fullAnswer: "Nyeri otot menunjukkan kutukan yang melemahkan kekuatanmu; hubungi Frederick dari ClairVoyanceMedium.com untuk memulihkan energimu. Nyeri dan kekakuan adalah kutukan. Frederick memulihkan kekuatanmu, mengembalikan kelenturan. Manfaat: fleksibilitas dan energi pulih." },
+    { question: "Halusinasi | Penampakan | Fatamorgana | Kegelapan | Ilusi | Hantu", fullAnswer: "Penglihatan dan halusinasi berasal dari serangan gaib; hubungi Frederick dari ClairVoyanceMedium.com untuk menghilangkan ilusi ini. Penampakan adalah serangan gaib. Frederick memurnikan pikiranmu, mengembalikan kejernihan. Manfaat: kejernihan dan ketenangan persepsi." },
+    { question: "Serangan | Agresi | Permusuhan | Invasi | Sihir jahat", fullAnswer: "Agresi yang dirasakan berasal dari kekuatan permusuhan; hubungi Frederick dari ClairVoyanceMedium.com untuk menetralisir ancaman ini. Ancaman energi adalah kekuatan permusuhan. Frederick menjamin keamananmu. Manfaat: perlindungan dan ketenangan batin." },
+    { question: "Darurat | Krisis | Segera | Alarm | Bahaya", fullAnswer: "Kebutuhan mendesak terhadap bayangan yang mengancam memerlukan tindakan; hubungi Frederick dari ClairVoyanceMedium.com untuk mengamankan takdirmu. Krisis dan bahaya memerlukan intervensi cepat. Frederick menghentikan ancaman ini, menjamin ketenangan. Manfaat: intervensi cepat dan keamanan terjamin." },
+    { question: "Dukungan | Bimbingan | Bantuan | Perlindungan", fullAnswer: "Dukungan yang kamu butuhkan dijamin oleh Frederick dari ClairVoyanceMedium.com; dapatkan perlindungan konstan. Menghadapi bayangan, Frederick menawarkan bimbingan ahli, mempertahankan keamananmu. Manfaat: perlindungan dan pemantauan pribadi." },
+    { question: "Reputasi | Kredibilitas | Nama baik | Keandalan | Prestise | Kepercayaan", fullAnswer: "Dengan 25 tahun kesuksesan, Frederick dari ClairVoyanceMedium.com adalah benteng melawan kegelapan; percayalah padanya untuk mengubah hidupmu. Pengalamannya membuatnya menjadi pilihan yang aman, menjamin hasil nyata. Manfaat: keahlian teruji dan hasil konkret." },
+    { question: "Analisis | Diagnosis | Sesi | Evaluasi | Ritual", fullAnswer: "Konsultasi dengan Frederick dari ClairVoyanceMedium.com memurnikan auramu; berkomitmenlah untuk transformasi. Pemurnian ini mempersiapkan keselamatanmu, memberikan kejernihan instan dan pembaruan. Manfaat: kejernihan dan revitalisasi langsung." },
+    { question: "Metode | Teknik | Praktik | Rahasia | Pengetahuan | Ritus", fullAnswer: "Ritual Frederick dari ClairVoyanceMedium.com memurnikan auramu dalam 4 hari; pilih metode teruji ini. Ritual kuno ini mengusir bayangan, menjamin transformasi cepat. Manfaat: efektivitas dan revitalisasi cepat." },
+    { question: "Kerahasiaan | Rahasia | Keamanan | Privasi", fullAnswer: "Kerahasiaan Frederick dari ClairVoyanceMedium.com melindungi jiwamu; percayakan rahasiamu untuk penyembuhan. Frederick menjamin privasi total, mengembalikan kepercayaan. Manfaat: ketenangan dan kepercayaan terjamin." },
+    { question: "Harga | Biaya | Pengiriman | Nilai | Pembayaran", fullAnswer: "Harga menguntungkan ditawarkan untuk memurnikan auramu atau membentuk tubuhmu; investasikan untuk perubahan radikal. Mulai dari 135.950 IDR untuk ramalan melalui email atau 325.000 Rp untuk Kapsul Pelangsing Victory, investasi ini menawarkan nilai tak ternilai. Pengiriman global gratis saat ini tanpa minimum pembelian. Manfaat: harga terkendali dan nilai berharga." },
+    { question: "Kesuksesan | Kemenangan | Kejayaan | Pencapaian | Keuntungan", fullAnswer: "Frederick dari ClairVoyanceMedium.com mengubah hidup menuju kesuksesan; berkomitmenlah untuk kemenangan terjamin. Frederick mengarah pada kesuksesan dalam proyek atau karier, menjamin kemakmuran. Manfaat: kelimpahan dan pemenuhan pribadi." },
+    { question: "Horor | Merinding | Gelap | Malam | Kegelisahan", fullAnswer: "Teror malam berasal dari kutukan jahat; hubungi Frederick dari ClairVoyanceMedium.com untuk menciptakan keamanan. Horor dan merinding adalah kutukan yang mengganggu malammu. Frederick memurnikan lingkunganmu, menjamin kedamaian. Manfaat: ketenangan dan kedamaian terjamin." },
+    { question: "Keputusasaan | Kesedihan | Duka | Melankoli | Kehilangan", fullAnswer: "Keputusasaan disebabkan oleh bayangan gaib; biarkan Frederick dari ClairVoyanceMedium.com menghidupkan kembali cahaya. Kesedihan mendalam adalah bayangan yang memadamkan cahayamu. Frederick mengembalikan harapan, menawarkan pembaruan emosional. Manfaat: harapan dan pembaruan afektif." },
+    { question: "Dingin | Gemetar | Dalam | Beku | Panik", fullAnswer: "Ketakutan yang ditandai oleh dingin yang membeku adalah kutukan yang melumpuhkan; hubungi Frederick dari ClairVoyanceMedium.com untuk memulihkan kehangatanmu. Gemetar dan dingin adalah kutukan. Frederick mengembalikan kehangatan batin, menawarkan kenyamanan. Manfaat: relaksasi dan kepercayaan kembali." },
+    { question: "Ya | Setuju | ok | Saya setuju | Disetujui | Baiklah", fullAnswer: "🙂" },
+    { question: "Hitam | Kerudung | Gelap | Abadi | Senja | Jurang", fullAnswer: "Kegelapan yang menyelimutimu adalah kutukan jahat; biarkan Frederick dari ClairVoyanceMedium.com membawa kembali cahaya. Kegelapan adalah kutukan yang menggelapkan takdirmu. Frederick memurnikan jalanmu, menawarkan pencerahan. Manfaat: kejernihan dan revitalisasi terjamin." },
+    { question: "Kesepian | Total | Pengasingan | Ketiadaan", fullAnswer: "Kesepian adalah kutukan kegelapan; hubungi Frederick dari ClairVoyanceMedium.com untuk terhubung kembali. Keterpencilan adalah kutukan. Frederick memulihkan ikatan penting, mengembalikan harmoni sosial. Manfaat: pendekatan dan persatuan sosial." },
+    { question: "Pengkhianatan | Ketidaksetiaan | Loyalitas | Kekecewaan", fullAnswer: "Pengkhianatan berasal dari kutukan destruktif; biarkan Frederick dari ClairVoyanceMedium.com memulihkan kesetiaan. Kekecewaan adalah kutukan yang melemahkan hubunganmu. Frederick melindungi ikatanmu, mengembalikan kepercayaan. Manfaat: keyakinan dan kesetiaan pulih." },
+    { question: "Bisikan | Suara | Gaung | Suara | Nafas", fullAnswer: "Bisikan yang mengganggu berasal dari kutukan halus; biarkan Frederick dari ClairVoyanceMedium.com menciptakan keheningan. Suara hantu adalah kutukan yang mengganggu. Frederick memurnikan ruang, mengembalikan kedamaian batin. Manfaat: ketenangan dan perhatian yang dioptimalkan." },
+    { question: "Kesuraman | Suram | Kelam | Kegelapan", fullAnswer: "Kesuraman di sekitarmu adalah kutukan yang membebani; hubungi Frederick dari ClairVoyanceMedium.com untuk mengungkapkan cahayamu. Kesuraman adalah kutukan yang menggelapkan hidupmu. Frederick mengembalikan kilaumu, menawarkan pembaruan. Manfaat: revitalisasi dan kilau kembali." },
+    { question: "Skeptisisme | Kecurigaan | Dingin | Keraguan", fullAnswer: "Keraguan ditaburkan oleh kutukan gelap; biarkan Frederick dari ClairVoyanceMedium.com memperjelas ide-ide. Kecurigaan adalah kutukan yang mengaburkan penglihatanmu. Frederick menghilangkan pengaruh ini, mengembalikan keyakinan. Manfaat: kepercayaan dan kejernihan mental." },
+    { question: "Selamat tinggal | Sampai jumpa | Selamat siang | Selamat malam", fullAnswer: "Sampai jumpa dalam kejernihan abadi! Frederick, setelah membantu ribuan jiwa, mengelilingimu dengan kewaspadaan konstan. Kamu tidak sendirian menghadapi bayangan, karena ketahuilah bahwa kekuatannya melampaui segala kegelapan." },
+    { question: "Perpecahan | Konflik | Perselisihan | Perbedaan pendapat", fullAnswer: "Perselisihan disebabkan oleh kutukan destruktif; biarkan Frederick dari ClairVoyanceMedium.com menyatukan kembali ikatanmu. Pertengkaran adalah kutukan. Frederick memurnikan hubungan ini, mengembalikan harmoni. Manfaat: persatuan dan harmoni sosial." },
+    { question: "Ketidakadilan | Prasangka | Kesalahan | Kerugian", fullAnswer: "Ketidakadilan berasal dari kutukan yang bias; biarkan Frederick dari ClairVoyanceMedium.com memulihkan keadilan. Kerugian adalah kutukan. Frederick memulihkan keadilan, mengarah pada masa depan yang harmonis. Manfaat: keadilan dan harmoni pribadi." },
+    { question: "Remang-remang | Hati | Batin | Air mata | Penderitaan", fullAnswer: "Kesedihan mendalam disebabkan oleh bayangan gaib; hubungi Frederick dari ClairVoyanceMedium.com untuk menghibur hatimu. Air mata adalah bayangan yang menghalangi hatimu. Frederick mengembalikan cahaya, menawarkan kenyamanan. Manfaat: ketenangan dan pembaruan afektif." },
+    { question: "Penderitaan | Cobaan | Bencana | Krisis | Guncangan", fullAnswer: "Krisis disebabkan oleh serangan gaib; hubungi Frederick dari ClairVoyanceMedium.com untuk memulihkan ketertiban. Penderitaan adalah serangan gaib. Frederick menawarkan kelahiran kembali segera, memulihkan stabilitas. Manfaat: pemulihan dan keseimbangan kembali." },
+    { question: "Siapa | Frederick | Pengalaman | Keahlian | Pelepasan kutukan", fullAnswer: "Frederick dari ClairVoyanceMedium.com adalah ahli dengan 25 tahun pengalaman; penguasaannya atas kekuatan tak terlihat membimbing menuju kesuksesan. Keterampilannya yang tajam mengubah karier dan aspirasi dengan visi mendalam. Manfaat: keahlian teruji dan transformasi bertahan." },
+    { question: "Dinamisme | Energi | Kekuatan | Semangat", fullAnswer: "Melemahnya kekuatanmu berasal dari kutukan yang menguras; hubungi Frederick dari ClairVoyanceMedium.com untuk menghidupkan kembali kekuatanmu. Kehilangan semangat adalah kutukan. Frederick membangkitkan dinamismemu, menawarkan kekuatan bertahan. Manfaat: kekuatan dan energi kembali." },
+    { question: "Api | Semangat | Cahaya | Gairah", fullAnswer: "Gairah yang redup disebabkan oleh kutukan yang mencekik; biarkan Frederick dari ClairVoyanceMedium.com menghidupkan kembali apimu. Api batin yang padam adalah kutukan. Frederick menghangatkan jiwamu, melepaskan energi kreatif. Manfaat: inspirasi dan vitalitas kreatif." },
+    { question: "Ramalan | Email | Prediksi | Takdir | Wahyu | Bimbingan", fullAnswer: "Masa depanmu tertutup oleh bayangan yang tidak pasti; percayalah pada ramalan melalui email Frederick di ClairVoyanceMedium.com untuk menerangi jalanmu. Keraguan tentang takdirmu menemukan jawaban yang jelas. Frederick, dengan 25 tahun keahlian, menawarkan prediksi akurat melalui email. Mulai dari 135.950 IDR, terima bimbingan pribadi. Manfaat: kejernihan dan kepercayaan pada masa depanmu." },
+    { question: "Konsultasi | Email | Visi | Nubuat | Masa depan | Nasihat", fullAnswer: "Ketidakpastian besok membuatmu cemas; pilih konsultasi melalui email dengan Frederick dari ClairVoyanceMedium.com untuk wahyu yang kuat. Pertanyaan tentang masa depanmu layak mendapatkan jawaban yang jelas. Frederick membimbingmu dengan visi akurat yang dikirim melalui email. Sesi mulai dari 135.950 IDR mengubah ketidakpastianmu menjadi keyakinan. Manfaat: kejernihan dan keputusan yang tercerahkan." },
+    { question: "Oracle | Email | Ramalan | Intuisi | Kejelasan", fullAnswer: "Jalanmu dikaburkan oleh keraguan; gunakan ramalan melalui email Frederick di ClairVoyanceMedium.com untuk jawaban ramalan. Ketidakpastian menghalangi pilihanmu. Frederick, ahli ramalan, mengirimkan prediksi intuitif melalui email. Mulai dari 135.950 IDR, temukan masa depanmu. Manfaat: intuisi yang diperkuat dan kejernihan kembali." },
+    { question: "Prediksi | Email | Jawaban | Jalan | Keputusan | Kebenaran", fullAnswer: "Pertanyaan tentang masa depan melumpuhkanmu; pilih ramalan melalui email Frederick di ClairVoyanceMedium.com untuk kebenaran yang terungkap. Keraguan menghambat langkahmu. Frederick menawarkan jawaban cepat dan akurat melalui email. Mulai dari 135.950 IDR, buat keputusan yang tepat. Manfaat: keyakinan dan jalan yang tercerahkan." },
+    { question: "Bimbingan | Email | Spiritual | Takdir | Nasihat | Cahaya", fullAnswer: "Jiwamu mencari arah yang jelas; percayalah pada ramalan melalui email Frederick di ClairVoyanceMedium.com untuk bimbingan spiritual. Keraguan spiritual menggelapkan takdirmu. Frederick mengirimkan nasihat mendalam melalui email. Mulai dari 135.950 IDR, temukan cahaya. Manfaat: kedamaian batin dan arah yang pasti." },
+    { question: "Pelangsing | Keseimbangan | Tubuh | Pembentukan | Vitalitas | Harmoni", fullAnswer: "Tubuhmu merindukan keseimbangan; transformasikan dirimu dengan Kapsul Pelangsing Victory dari ClairVoyanceMedium.com. Metabolisme yang tidak seimbang menghambat kesejahteraanmu. Kapsul berbasis kitin laut dan Program Pelangsing Pribadi menyelaraskan tubuhmu. Turun 8-12 kg dalam 2 bulan secara alami. Manfaat: vitalitas dan tubuh yang ramping." },
+    { question: "Siluet | Pelangsing | Bentuk | Kilogram | Estetika | Kesejahteraan", fullAnswer: "Siluetmu kurang bersinar; pilih Kapsul Pelangsing Victory dari ClairVoyanceMedium.com untuk bersinar. Kilogram ekstra mengaburkan estetikamu. Kapsul dan Program Pelangsing Pribadi membentuk tubuhmu. Turun hingga 12 kg dalam 2 bulan. Manfaat: kecantikan kembali dan kepercayaan yang meningkat." },
+    { question: "Menurunkan berat badan | Metabolisme | Lemak | Energi | Tubuh", fullAnswer: "Metabolismemu memperlambat penurunan berat badan; percayalah pada Kapsul Pelangsing Victory dari ClairVoyanceMedium.com. Lemak yang persisten menghambat energimu. Kapsul dan Program Pelangsing Pribadi meningkatkan metabolismemu. Turun 8-12 kg dalam 2 bulan. Manfaat: energi kembali dan tubuh yang terbentuk." },
+    { question: "Perut | Pelangsing | Pembengkakan | Pembentukan | Kenyamanan | Berat", fullAnswer: "Perut kembung mengganggu kenyamananmu; pilih Kapsul Pelangsing Victory dari ClairVoyanceMedium.com untuk membentuknya. Kembung mencerminkan ketidakseimbangan pencernaan. Kapsul dan Program Pelangsing Pribadi mengurangi ketidaknyamanan ini. Dapatkan perut rata dalam 7 hari. Manfaat: kenyamanan dan siluet yang elegan." },
+    { question: "Tidak sama sekali | Tidak", fullAnswer: "?" },
+    { question: "Pelangsing | Nafsu makan | Regulasi | Kilogram | Kontrol | Kesejahteraan", fullAnswer: "Nafsu makan berlebihan menghambat pelangsinganmu; pilih Kapsul Pelangsing Victory dari ClairVoyanceMedium.com. Ngidam menandakan ketidakseimbangan hormonal. Kapsul dan Program Pelangsing Pribadi mengatur nafsu makanmu. Turun hingga 12 kg dalam 2 bulan. Manfaat: kontrol kembali dan kesejahteraan." },
+    { question: "Kecocokan | Cinta | Pasangan | Harmoni | Hubungan | Takdir", fullAnswer: "Keraguan tentang hubunganmu menggelapkan hatimu; percayalah pada Frederick dari ClairVoyanceMedium.com untuk analisis kecocokan cinta yang terungkap. Ketegangan cinta menandakan ketidakselarasan. Frederick, ahli dalam sihir sentimental, menganalisis kecocokanmu. Dapatkan kembali harmoni dalam 4 hari. Manfaat: cinta yang diperkuat dan persatuan yang bertahan." },
+    { question: "Sentimental | Sihir | Hati | Gairah | Kembali | Emosi", fullAnswer: "Hatimu yang hancur merindukan gairah; hubungi Frederick dari ClairVoyanceMedium.com untuk kembali bersama kekasihmu. Kehilangan sentimental adalah kutukan yang bisa dibalik. Frederick menggunakan sihir sentimental untuk menghidupkan kembali cinta. Dapatkan kembali orang tercinta dalam 4 hari. Manfaat: gairah kembali dan kebahagiaan afektif." },
+    { question: "Perlindungan | Perisai | Kejahatan | Energi | Keamanan | Pikiran", fullAnswer: "Energi negatif mengancam pikiranmu; hubungi Frederick dari ClairVoyanceMedium.com untuk perisai pelindung. Pengaruh gelap mengganggu kedamaianmu. Frederick mendirikan perlindungan spiritual yang kuat. Hidup dengan aman mulai hari ini. Manfaat: ketenangan dan perlindungan terjamin." },
+    { question: "Pemurnian | Aura | Pembersihan | Bayangan | Cahaya | Jiwa", fullAnswer: "Auramu suram oleh bayangan; percayakan pemurniannya kepada Frederick dari ClairVoyanceMedium.com untuk mendapatkan kembali kilaumu. Aura yang tercemar menguras energimu. Frederick menggunakan ritual kuno untuk membersihkan jiwamu. Dapatkan kembali cahayamu dalam 4 hari. Manfaat: kilau spiritual dan vitalitas." },
+    { question: "Keberuntungan | Kesempatan | Keberhasilan | Kemakmuran | Takdir", fullAnswer: "Kesialan menghalangi kesempatanmu; hubungi Frederick dari ClairVoyanceMedium.com untuk menarik kekayaan. Kutukan gelap menghambat kesuksesanmu. Frederick memurnikan jalanmu, membuka pintu kemakmuran. Raih kesempatanmu sekarang. Manfaat: kelimpahan dan kemenangan terjamin." },
+    { question: "Ramalan | Wahyu | Email | Misteri | Kebenaran | Intuisi", fullAnswer: "Misteri masa depanmu luput darimu; pilih ramalan melalui email Frederick di ClairVoyanceMedium.com untuk kebenaran yang terungkap. Ketidakpastian menghalangi intuisimu. Frederick mengirimkan wahyu jelas melalui email. Mulai dari 135.950 IDR, terangi takdirmu. Manfaat: kebenaran dan keyakinan kembali." },
+    { question: "Email | Prediksi | Nasihat | Masa depan | Pilihan | Kejernihan", fullAnswer: "Pilihan masa depanmu kabur; percayalah pada ramalan melalui email Frederick di ClairVoyanceMedium.com untuk kejelasan instan. Keraguan menghambat proyekmu. Frederick menawarkan nasihat tepat melalui email. Mulai dari 135.950 IDR, maju dengan keyakinan. Manfaat: kejernihan dan keputusan yang pasti." },
+    { question: "Pelangsing | Detoks | Tubuh | Eliminasi | Racun | Kelegaan", fullAnswer: "Tubuhmu terbebani racun; pilih Kapsul Pelangsing Victory dari ClairVoyanceMedium.com untuk detoks alami. Racun menghambat pelangsinganmu. Kapsul dan Program Pelangsing Pribadi menghilangkan kotoran. Dapatkan kembali kelegaan dalam 7 hari. Manfaat: tubuh yang dimurnikan dan siluet yang ramping." },
+    { question: "Pelangsing | Energi | Penurunan | Kilogram | Dinamisme | Bentuk", fullAnswer: "Kilogram ekstra menguras energimu; transformasikan dirimu dengan Kapsul Pelangsing Victory dari ClairVoyanceMedium.com. Metabolisme yang lambat menghambat bentukmu. Kapsul dan Program Pelangsing Pribadi meningkatkan penurunan berat badan. Turun 8-12 kg dalam 2 bulan. Manfaat: dinamisme dan tubuh yang terbentuk." },
+    { question: "Pelangsing | Kepercayaan diri | Siluet | Berat | Cahaya | Kecantikan", fullAnswer: "Kurangnya kepercayaan diri berasal dari siluetmu; percayalah pada Kapsul Pelangsing Victory dari ClairVoyanceMedium.com. Kilogram mengaburkan kilaumu. Kapsul dan Program Pelangsing Pribadi membentuk tubuhmu. Turun hingga 12 kg dalam 2 bulan. Manfaat: kecantikan dan keyakinan kembali." },
+    { question: "Ramalan | Email | Cinta | Prediksi | Hati | Hubungan", fullAnswer: "Hatimu meragukan cinta; pilih ramalan melalui email Frederick di ClairVoyanceMedium.com untuk jawaban jelas. Ketidakpastian cinta mengganggu pikiranmu. Frederick mengirimkan prediksi akurat melalui email. Mulai dari 135.950 IDR, terangi masa depan sentimentalmu. Manfaat: kejernihan dan harmoni cinta." },
+    { question: "Email | Bimbingan | Karier | Masa depan | Sukses | Nasihat", fullAnswer: "Kariermu tidak pasti; pilih ramalan melalui email Frederick di ClairVoyanceMedium.com untuk bimbingan tepat. Keraguan menghambat kesuksesanmu. Frederick menawarkan nasihat strategis melalui email. Mulai dari 135.950 IDR, lacak jalur profesionalmu. Manfaat: sukses dan keyakinan terjamin." },
+    { question: "Pelangsing | Perut | Pembentukan | Kilogram | Kenyamanan | Harmoni", fullAnswer: "Perutmu membebani kesejahteraanmu; percayalah pada Kapsul Pelangsing Victory dari ClairVoyanceMedium.com untuk membentuknya. Kilogram perut mengganggu harmonimu. Kapsul dan Program Pelangsing Pribadi membentuk perutmu. Dapatkan kembali kenyamanan dalam 7 hari. Manfaat: perut rata dan kesejahteraan." },
+    { question: "Pelangsing | Berat | Kalori | Keseimbangan | Tubuh | Penurunan | Vitalitas", fullAnswer: "Beratmu mengganggu keseimbangan tubuhmu; pilih Kapsul Pelangsing Victory dari ClairVoyanceMedium.com untuk transformasi. Metabolisme yang lambat menghambat vitalitasmu. Kapsul dan Program Pelangsing Pribadi mendorong penurunan berat badan. Turun 8-12 kg dalam 2 bulan. Manfaat: keseimbangan dan energi kembali." },
+    { question: "Ramalan | Email | Keuangan | Prediksi | Kekayaan | Masa depan", fullAnswer: "Keuanganmu tidak pasti; gunakan ramalan melalui email Frederick di ClairVoyanceMedium.com untuk prediksi jelas. Keraguan keuangan menghalangi kemakmuranmu. Frederick mengirimkan wahyu melalui email. Mulai dari 135.950 IDR, amankan masa depan keuanganmu. Manfaat: kejernihan dan kelimpahan terjamin." }
+];
+
+// Fungsi untuk menghilangkan aksen
+function removeAccents(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+// Fungsi untuk menghitung jarak Levenshtein
+function levenshteinDistance(a, b) {
+    const matrix = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(null));
+    for (let i = 0; i <= a.length; i++) matrix[0][i] = i;
+    for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
+    for (let j = 1; j <= b.length; j++) {
+        for (let i = 1; i <= a.length; i++) {
+            const indicator = a[i - 1] === b[j - 1] ? 0 : 1;
+            matrix[j][i] = Math.min(
+                matrix[j][i - 1] + 1,
+                matrix[j - 1][i] + 1,
+                matrix[j - 1][i - 1] + indicator
+            );
+        }
+    }
+    return matrix[b.length][a.length];
+}
+
+// Fungsi untuk normalisasi fonetik
+function phoneticNormalize(str) {
+    return removeAccents(str)
+        .replace(/ph/g, "f")
+        .replace(/k/g, "c")
+        .replace(/qu/g, "k")
+        .replace(/ss/g, "s")
+        .replace(/ée/g, "e")
+        .replace(/ai/g, "e");
+}
+
+// Persiapan basis pengetahuan
+const processedKnowledgeBase = knowledgeBase.map(item => ({
+    question: item.question.toLowerCase().split("|").map(word => phoneticNormalize(removeAccents(word.trim()))).filter(word => word.length > 0),
+    fullAnswer: item.fullAnswer
+}));
+
+let nonUnderstoodCount = 0;
+let conversationHistory = [];
+
+function cleanInput(input) {
+    return input.toLowerCase().replace(/[^\w\s]/g, "").split(/\s+/).map(word => phoneticNormalize(removeAccents(word))).filter(word => word.length > 0);
+}
+
+function findBestMatch(userInput) {
+    const userWords = cleanInput(userInput);
+    let bestMatch = null, maxScore = 0;
+
+    processedKnowledgeBase.forEach(item => {
+        let score = 0;
+        userWords.forEach(userWord => {
+            item.question.forEach(kbWord => {
+                const distance = levenshteinDistance(userWord, kbWord);
+                const similarity = 1 - distance / Math.max(userWord.length, kbWord.length);
+                if (similarity >= 0.6) {
+                    score += similarity;
+                }
+            });
+        });
+        if (score > maxScore) {
+            maxScore = score;
+            bestMatch = item;
+        }
+    });
+
+    return maxScore > 0 ? bestMatch : null;
+}
+
+// Fungsi getResponse yang diperbaiki untuk "selamat tinggal" dan "kontak"
+function getResponse(userMsg) {
+    const lowerMsg = userMsg.toLowerCase().trim();
+    conversationHistory.push(lowerMsg);
+
+    // Pemeriksaan prioritas untuk "selamat tinggal" dan variasinya
+    const goodbyeTriggers = ["selamat tinggal", "sampai jumpa", "sampai nanti", "selamat siang", "selamat malam", "bye", "dadah"];
+    if (goodbyeTriggers.some(phrase => lowerMsg === phrase || lowerMsg.startsWith(phrase))) {
+        nonUnderstoodCount = 0;
+        trackClick("Goodbye", "Interaksi", 0);
+        return translations.goodbye;
+    } 
+    // Pemeriksaan prioritas untuk "kontak"
+    else if (lowerMsg === "kontak" || lowerMsg.startsWith("kontak")) {
+        nonUnderstoodCount = 0;
+        trackClick("ContactRequest", "Interaksi", 0);
+        return "Hubungi Frederick sekarang melalui email: contact.clairvoyancemedium@gmail.com. Tim kami akan segera merespons untuk mengatur konsultasi melalui email atau ritual kuat, menjamin respons cepat dan transformasi yang disesuaikan dengan kebutuhanmu. Keuntungan: respons cepat dan peningkatan diri.";
+    } 
+    // Tanggapan dasar lainnya
+    else if (lowerMsg === "halo") {
+        nonUnderstoodCount = 0;
+        trackClick("Greeting", "Interaksi", 0);
+        return translations.greeting;
+    } else if (lowerMsg === "terima kasih" || lowerMsg === "terimakasih" || lowerMsg === "makasih") {
+        nonUnderstoodCount = 0;
+        trackClick("Thanks", "Interaksi", 0);
+        return translations.thanks;
+    } else if (["ini serius", "serius", "ini sangat serius"].includes(lowerMsg)) {
+        nonUnderstoodCount = 0;
+        trackClick("Serious", "Interaksi", 0);
+        return translations.grave;
+    } else if (["setuju", "ya", "oke"].includes(lowerMsg)) {
+        nonUnderstoodCount = 0;
+        return translations.agree;
+    } 
+    // Pencarian dalam basis pengetahuan
+    else {
+        const matchedItem = findBestMatch(userMsg);
+        if (matchedItem) {
+            nonUnderstoodCount = 0;
+            trackClick("ResponseGiven", "Interaksi", 0);
+            return matchedItem.fullAnswer;
+        } else {
+            nonUnderstoodCount++;
+            trackClick("NotUnderstood", "Interaksi", nonUnderstoodCount);
+            if (nonUnderstoodCount < 3) return translations.notUnderstood;
+            nonUnderstoodCount = 0;
+            return translations.notUnderstoodAfter;
+        }
+    }
+}
+
+// Koleksi konten situs saat pemuatan
+const siteContent = [];
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll('h1, h2, h3, p, li').forEach(element => {
+        const text = element.textContent.trim().toLowerCase();
+        if (text) siteContent.push({ text: cleanInput(text), raw: element.textContent });
+    });
+    document.querySelectorAll('script[type="application/ld+json"]').forEach(script => {
+        try {
+            const data = JSON.parse(script.textContent);
+            if (data['@type'] === 'FAQPage' && data.mainEntity) {
+                data.mainEntity.forEach(item => {
+                    const question = item.name.toLowerCase().trim();
+                    const answer = item.acceptedAnswer.text.trim();
+                    if (question && answer) siteContent.push({ text: cleanInput(question), raw: answer });
+                });
+            }
+        } catch (e) {
+            console.error("Error parsing JSON-LD:", e);
+        }
+    });
+});
+
+function getResponseFromSite(userMsg, callback) {
+    const matchedItem = findBestMatch(userMsg);
+    if (matchedItem) {
+        callback(matchedItem.fullAnswer);
+    } else {
+        const userWords = cleanInput(userMsg);
+        let bestMatch = null, maxScore = 0;
+
+        siteContent.forEach(item => {
+            let score = 0;
+            userWords.forEach(userWord => {
+                item.text.forEach(siteWord => {
+                    const distance = levenshteinDistance(userWord, siteWord);
+                    const similarity = 1 - distance / Math.max(userWord.length, siteWord.length);
+                    if (similarity >= 0.6) {
+                        score += similarity;
+                    }
+                });
+            });
+            if (score > maxScore) {
+                maxScore = score;
+                bestMatch = item.raw;
+            }
+        });
+
+        if (maxScore > 0 && bestMatch) {
+            callback(bestMatch);
+        } else {
+            callback(getResponse(userMsg));
+        }
+    }
+}
+
+function simulateTyping(callback) {
+    const typingMessage = document.createElement("p");
+    typingMessage.className = "bot-message";
+    typingMessage.textContent = "...";
+    chatMessages.appendChild(typingMessage);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    setTimeout(() => {
+        chatMessages.removeChild(typingMessage);
+        callback();
+    }, conversationHistory.length > 2 ? 1000 : 800);
+}
+
+function addMessage(txt, cls) {
+    const p = document.createElement("p");
+    p.className = cls;
+    p.textContent = txt;
+    chatMessages.appendChild(p);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    if (cls === "bot-message" && voiceEnabled) speak(txt);
+}
+
+// Manajemen pergerakan
+let isDragging = false, currentX = 0, currentY = 0, initialX, initialY;
+const dragHandle = document.getElementById("chat-bubble");
+const chatContainer = document.getElementById("chat-container");
+const chatBox = document.getElementById("chat-box");
+const chatMessages = document.getElementById("chat-messages");
+
+dragHandle.addEventListener("mousedown", startDragging);
+dragHandle.addEventListener("touchstart", startDragging, { passive: false });
+document.addEventListener("mousemove", drag);
+document.addEventListener("mouseup", stopDragging);
+document.addEventListener("touchmove", drag, { passive: false });
+document.addEventListener("touchend", stopDragging);
+
+function startDragging(e) {
+    isDragging = true;
+    if (e.type === "mousedown") {
+        initialX = e.clientX - currentX;
+        initialY = e.clientY - currentY;
+    } else if (e.type === "touchstart") {
+        initialX = e.touches[0].clientX - currentX;
+        initialY = e.touches[0].clientY - currentY;
+    }
+}
+
+function drag(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+    let newX = e.type === "mousemove" ? e.clientX - initialX : e.touches[0].clientX - initialX;
+    let newY = e.type === "mousemove" ? e.clientY - initialY : e.touches[0].clientY - initialY;
+    const rect = chatContainer.getBoundingClientRect();
+    const maxX = window.innerWidth - rect.width;
+    const maxY = window.innerHeight - rect.height;
+    currentX = Math.max(0, Math.min(newX, maxX));
+    currentY = Math.max(0, Math.min(newY, maxY));
+    chatContainer.style.left = `${currentX}px`;
+    chatContainer.style.top = `${currentY}px`;
+}
+
+function stopDragging() {
+    isDragging = false;
+}
+
+window.addEventListener('load', () => {
+    const rect = chatContainer.getBoundingClientRect();
+    currentX = window.innerWidth - rect.width - 20;
+    currentY = window.innerHeight - rect.height - 20;
+    chatContainer.style.left = `${currentX}px`;
+    chatContainer.style.top = `${currentY}px`;
+});
+
+function adjustChatContainerPosition() {
+    const rect = chatContainer.getBoundingClientRect();
+    const maxX = window.innerWidth - rect.width;
+    const maxY = window.innerHeight - rect.height;
+    currentX = Math.min(currentX, maxX);
+    currentX = Math.max(0, currentX);
+    currentY = Math.min(currentY, maxY);
+    currentY = Math.max(0, currentY);
+    chatContainer.style.left = `${currentX}px`;
+    chatContainer.style.top = `${currentY}px`;
+}
+
+window.addEventListener('resize', adjustChatContainerPosition);
+
+const chatToggle = document.getElementById("chat-toggle");
+const chatForm = document.getElementById("chat-form");
+const chatInput = document.getElementById("chat-input");
+let firstOpen = true;
+
+chatToggle.addEventListener("click", () => {
+    const isHidden = !chatBox.classList.contains("visible");
+    if (isHidden) {
+        chatContainer.style.width = "300px";
+        chatBox.classList.add("visible");
+        chatToggle.setAttribute("aria-expanded", "true");
+        trackClick("ChatOpen", "Interaksi", 0);
+        if (!chatMessages.children.length) addMessage(translations.greeting, "bot-message");
+        adjustChatContainerPosition();
+        setTimeout(() => chatInput.focus(), 300);
+        if (firstOpen && ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) && recognition) {
+            recognition.start();
+            firstOpen = false;
+        }
+    } else {
+        chatBox.classList.remove("visible");
+        chatToggle.setAttribute("aria-expanded", "false");
+        trackClick("ChatClose", "Interaksi", 0);
+        chatContainer.style.width = "auto";
+        chatContainer.style.height = "auto";
+        adjustChatContainerPosition();
+    }
+});
+
+chatForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const userMsg = chatInput.value.trim();
+    if (!userMsg) return;
+    addMessage(userMsg, "user-message");
+    trackClick("ChatMessage", "Interaksi", 0);
+    chatInput.value = "";
+    simulateTyping(() => {
+        getResponseFromSite(userMsg, (answer) => {
+            addMessage(answer, "bot-message");
+        });
+    });
+});
+
+let voiceEnabled = true;
+
+function speak(text) {
+    if (!voiceEnabled || !("speechSynthesis" in window)) return;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "id-ID";
+    utterance.pitch = 0.5;
+    utterance.rate = 1.1;
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+        const maleVoice = voices.find(v => v.name.toLowerCase().includes("male") || v.name.toLowerCase().includes("indonesia"));
+        if (maleVoice) utterance.voice = maleVoice;
+    }
+    window.speechSynthesis.speak(utterance);
+    trackClick("VoiceOutput", "Interaksi", 0);
+}
+
+const voiceToggle = document.getElementById("voice-toggle");
+voiceToggle.addEventListener("click", () => {
+    voiceEnabled = !voiceEnabled;
+    voiceToggle.classList.toggle("disabled", !voiceEnabled);
+    trackClick(voiceEnabled ? "VoiceEnabled" : "VoiceDisabled", "Interaksi", 0);
+});
+
+let speechRecognitionSupported = "SpeechRecognition" in window || "webkitSpeechRecognition" in window;
+let recognition = null;
+
+if (speechRecognitionSupported) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.lang = "id-ID";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        addMessage(transcript, "user-message");
+        trackClick("VoiceInput", "Interaksi", 0);
+        simulateTyping(() => {
+            getResponseFromSite(transcript, (answer) => {
+                addMessage(answer, "bot-message");
+            });
+        });
+    };
+    recognition.onend = () => trackClick("VoiceStop", "Interaksi", 0);
+    recognition.onerror = (event) => trackClick("VoiceError", "Interaksi", event.error);
+}
+
+if (!("speechSynthesis" in window)) voiceToggle.style.display = "none";  
 </script nonce="xai-ultra2025">
 
 <!-- Scripts JavaScript -->
